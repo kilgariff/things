@@ -1,6 +1,7 @@
 package com.rosscodes.things.ui.tasks
 
 import android.content.Context
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,6 +18,7 @@ import com.rosscodes.things.MainActivity
 import com.rosscodes.things.Task
 import com.rosscodes.things.databinding.FragmentTasksBinding
 import com.rosscodes.things.databinding.TaskBinding
+import java.time.LocalDate
 
 
 class TasksFragment : Fragment() {
@@ -39,13 +41,27 @@ class TasksFragment : Fragment() {
         val linearLayout: LinearLayout = binding.tasksLayout
 
         val taskListViewModel: TaskListViewModel by activityViewModels()
+        val mainActivity = activity as MainActivity
+
+        // Calculate today's due date string
+        val todaysDate = mainActivity.getTodaysDate()
+        val showTodaysTasks = arguments?.getBoolean("showTodaysTasks")
+        if (showTodaysTasks != null) {
+            taskListViewModel.showTodaysTasks = showTodaysTasks
+        } else {
+            taskListViewModel.showTodaysTasks = false
+        }
 
         taskListViewModel.tasks.observe(viewLifecycleOwner, Observer { tasks ->
 
-            val mainActivity = activity as MainActivity
             linearLayout.removeAllViews()
 
             for (task in tasks) {
+
+                if (taskListViewModel.showTodaysTasks != (task.dueDateAndTime == todaysDate)) {
+                    continue
+                }
+
                 val taskView = TaskBinding.inflate(inflater, linearLayout, true)
 
                 taskView.taskName.setOnFocusChangeListener { _, hasFocus ->
@@ -73,6 +89,13 @@ class TasksFragment : Fragment() {
                         }
                     }
                 })
+
+                taskView.taskDue.setOnClickListener { view ->
+                    mainActivity.lastChangedTaskId = task.id
+                    mainActivity.showDatePicker(view)
+                }
+
+                taskView.taskDue.text = task.dueDateAndTime
 
                 val textView = taskView.taskName
                 textView.setText(task.description)

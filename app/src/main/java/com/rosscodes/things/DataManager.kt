@@ -25,7 +25,7 @@ class DataManager(context: Context) {
 
         val tasks = mutableListOf<Task>();
 
-        val cursor = db.rawQuery("SELECT * FROM Tasks", null);
+        val cursor = db.rawQuery("SELECT * FROM Tasks ORDER BY due ASC", null);
         if (cursor.moveToFirst()) {
             do {
                 val id = cursor.getLong(cursor.getColumnIndexOrThrow("id"))

@@ -1,7 +1,9 @@
 package com.rosscodes.things
 
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -15,7 +17,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.rosscodes.things.databinding.ActivityMainBinding
 import com.rosscodes.things.databinding.TaskBinding
+import com.rosscodes.things.ui.tasks.DatePickerFragment
 import com.rosscodes.things.ui.tasks.TaskListViewModel
+import java.time.LocalDate
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,7 +44,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.appBarMain.fabAdd.setOnClickListener { view ->
 
-            justAddedTaskId = dataManager.add(Task(0, "Task", ""))
+            var date = ""
+            if (taskListViewModel.showTodaysTasks) {
+                date = getTodaysDate()
+            }
+            justAddedTaskId = dataManager.add(Task(0, "Task", date))
             val tasks = dataManager.allTasks()
             taskListViewModel.tasks.value = tasks
         }
@@ -60,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.nav_tasks), drawerLayout)
+                R.id.nav_now, R.id.nav_later), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -77,5 +85,31 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    fun showDatePicker (v: View) {
+        DatePickerFragment().show(supportFragmentManager, "timePicker")
+    }
+
+    fun getTodaysDate() : String {
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val day = c.get(Calendar.DAY_OF_MONTH)
+        return LocalDate.of(year, month + 1, day).toString()
+    }
+
+    fun setDueDateOnCurrentTask(year: Int, month: Int, day: Int) {
+        val tasks = dataManager.allTasks()
+        for (task in tasks) {
+            if (task.id == lastChangedTaskId) {
+                task.dueDateAndTime = LocalDate.of(year, month + 1, day).toString()
+                dataManager.updateTask(task)
+                break;
+            }
+        }
+
+        val taskListViewModel = ViewModelProvider(this).get(TaskListViewModel::class.java)
+        taskListViewModel.tasks.value = dataManager.allTasks()
     }
 }

@@ -3,12 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_tasks">
+    app:startDestination="@+id/nav_now">
 
     <fragment
-        android:id="@+id/nav_tasks"
+        android:id="@+id/nav_now"
         android:name="com.rosscodes.things.ui.tasks.TasksFragment"
-        android:label="@string/menu_tasks"
-        tools:layout="@layout/fragment_tasks" />
+        android:label="@string/menu_now"
+        tools:layout="@layout/fragment_tasks" >
+        <argument
+            android:name="showTodaysTasks"
+            app:argType="boolean"
+            android:defaultValue="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_later"
+        android:name="com.rosscodes.things.ui.tasks.TasksFragment"
+        android:label="@string/menu_later"
+        tools:layout="@layout/fragment_tasks" >
+        <argument
+            android:name="showTodaysTasks"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
 
 </navigation>

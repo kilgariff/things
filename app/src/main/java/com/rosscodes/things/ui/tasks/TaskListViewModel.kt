@@ -5,6 +5,8 @@ import com.rosscodes.things.Task
 
 class TaskListViewModel : ViewModel() {
 
+    var showTodaysTasks: Boolean = false
+
     val tasks: MutableLiveData<List<Task>> by lazy {
         MutableLiveData<List<Task>>()
     }

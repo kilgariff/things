@@ -2,10 +2,11 @@
     <string name="app_name">Things</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Your things!</string>
+    <string name="nav_header_subtitle">Select the things you want to see</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_tasks">Tasks</string>
+    <string name="menu_now">Now</string>
+    <string name="menu_later">Later</string>
 </resources>
